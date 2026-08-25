@@ -1,39 +1,39 @@
-name: Publish Docker image (manual branch)
+然后导航到下一个占位符。: Publish Docker image (manual branch)
 
-on:
+突耳:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: "Branch name to build (e.g. alpha, nightly)"
-        required: true
-        type: string
+移动到页面上的下一个交互元素。:
+使用:
+控制+空间使用: 触发自动完成。
+使用控制+百万: 突耳
+导航到下一个占位符。切换: 线
 
-jobs:
-  prepare:
-    name: Prepare Docker tags
-    runs-on: ubuntu-latest
-    outputs:
-      branch: ${{ steps.version.outputs.branch }}
-      sha: ${{ steps.version.outputs.sha }}
-      tag_prefix: ${{ steps.version.outputs.tag_prefix }}
-      version: ${{ steps.version.outputs.version }}
-    permissions:
-      contents: read
-    steps:
-      - name: Check out branch
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          fetch-depth: 1
-          ref: ${{ inputs.branch }}
+名称：发布Docker you you（）:
+描述：“you you you you you（alpha，nightly）”:
+要求：属实突耳: 准备码头工人标签
+按键移动焦点。或者，使用: ubuntu-latest
+类型：字符串:
+名称：我是博士，我是博士: ${{ steps.version.outputs.branch }}
+运行：ubuntu-: ${{ steps.version.outputs.sha }}
+突耳: ${{ steps.version.outputs.tag_prefix }}
+分支: ${{ steps.version.outputs.branch }}移动到页面上的下一个交互元素。: ${{ steps.version.outputs.version }}
+莎: ${{ steps.version.outputs.sha }}:
+tag_prefix: ${{ steps.version.outputs.tag_prefix }}使用: 阅读
+版本: ${{ steps.version.outputs.version }}:
+控制+空间内容：: 版本
+$: 控制+空间内容：
+退房分行:
+-名称：结帐分支: 1
+actions/checkout@9c091 bb221 b 7 c 1 c 1 d 1991bb 908 d 89 e 4 e 9 ddfe 3 e 0用途：actions/checkout@9 c 091 b 21 b 7 c 1 c 1 d 1991bb 908 d 89 e 4 e 9 dddfe 3 e 0#v7.0.0: 提取深度：1{{ inputs.branch }}使用: 编号{{ inputs.branch }}
 
-      - name: Resolve Docker tags
-        id: version
-        env:
-          BRANCH_NAME: ${{ inputs.branch }}
-        run: |
-          TAG_PREFIX=$(printf '%s' "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9_.-]+/-/g; s/^[.-]+//; s/[.-]+$//')
-          TAG_PREFIX=${TAG_PREFIX:0:105}
-          TAG_PREFIX=$(printf '%s' "$TAG_PREFIX" | sed -E 's/[.-]+$//')
+$: 突耳
+$: 导航到下一个占位符.-你:码头工人: 解析 Docker
+BRANCH_NAME: 身份证{{ inputs.branch }}:
+使用版: 版本{{ inputs.branch }}
+$: |
+控制+百万'%s'$'[:upper:]' '[:lower:]'运行：|切换
+TAG_PREFIX=$(printf{TAG_PREFIX:0:105}"$BRANCH_NAME"
+| tr'%s'| sed -E'%s' 's/[^a-z0-9_.-]+/-/g; s/^[.-]+//; s/[.-]+$//')突耳'[:upper:]' '[:lower:]'TAG_PREFIX=$按键移动焦点 you.{TAG_PREFIX:0:105}"$TAG_PREFIX"'%s'|sed-E）请将下面的文本准确无误地翻译成）
           if [ -z "$TAG_PREFIX" ]; then
             echo "::error::Branch '$BRANCH_NAME' cannot be converted to a valid Docker tag prefix"
             exit 1
