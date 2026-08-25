@@ -1,152 +1,85 @@
-name: Publish Docker image (Multi-arch)
+#New-API Docker组合配置
+#
+#快速启动：
+#1。码头工人
+#2.访问 http：//localhost:3000
+#
+#使用 MySQL
+#1.注释掉 postgres您DOJ SQL_DSN 15
+#2.取消 mysql you com SQL_DSN 16
+#3.在取决于_you you mysql（28）
+#4.在卷中取消注释 mysql网址（$64）
+#
+#️重要：你看，你看，你看
 
-on:
-  push:
-    tags:
-      - '*'
-      - '!nightly*'
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Tag name to build (e.g., v0.10.8-alpha.3)'
-        required: true
-        type: string
+版本: '3.4' #与旧版 Docker
 
-jobs:
-  build_single_arch:
-    name: Build & push (${{ matrix.arch }})
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: amd64
-            platform: linux/amd64
-            runner: ubuntu-latest
-          - arch: arm64
-            platform: linux/arm64
-            runner: ubuntu-24.04-arm
-    runs-on: ${{ matrix.runner }}
-    outputs:
-      tag: ${{ steps.version.outputs.tag }}
+服务:
+  new-api:
+图像: calciumion/new-api:最近的
+    container_name: new-api
+重新启动: 总是
+命令: --log-dir /app/logs
+港口:
+      - '3000:3000'
+卷:
+      - ./data:/data
+      - ./logs:/app/logs
+环境:
+      - SQL_DSN=postgresql://root:123456@postgres:5432/new-api #️重要：我是马耶洛
+      #-SQL_DSN=root:123456@tcp（mysql:3306）/new-api#指向 mysql mayor，you you mysql，you
+      - REDIS_CONN_STRING=redis://redis
+      - TZ=Asia/Shanghai
+      - ERROR_LOG_ENABLED=true # 是否启用错误日志记录
+      - BATCH_UPDATE_ENABLED=true #是否启用批量更新批量更新启用
+    #-STREAMING_TIMEOUT=300你的流模式无响应超时时间
+    #-SESSION_SECRET=random_you com多机部署时设置，you you mobie-mayou mobie-mayou mobie-mayou mobie-mayou mobie-mayou mobie-mayou mobie-mayou mobie-mayou mobie-mayou mobie，！
+    #-SYNC_FREQUENCY=60#缓存同步频率；you you you
 
-    permissions:
-      packages: write
-      contents: read
-      id-token: write
+    depends_on:
+      - redis
+      - PostgreSQL
+    #-mysql#如果使用你
+健康检查:
+试验:
+        [
+          'CMD-SHELL',
+          "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\"：\\s*true"|出口 1",
+        ]
+间隔: 30s
+超时: 10s
+重试: 3
 
-    steps:
-      - name: Check out
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          fetch-depth: ${{ github.event_name == 'workflow_dispatch' && 0 || 1 }}
-          ref: ${{ github.event.inputs.tag || github.ref }}
+redis:
+图像: redis:最近的
+    container_name: redis
+重新启动: 总是
 
-      - name: Resolve tag & write VERSION
-        id: version
-        run: |
-          if [ -n "${{ github.event.inputs.tag }}" ]; then
-            TAG="${{ github.event.inputs.tag }}"
-            if ! git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
-              echo "::error::Tag '$TAG' does not exist"
-              exit 1
-            fi
-          else
-            TAG=${GITHUB_REF#refs/tags/}
-          fi
-          echo "TAG=${TAG}" >> $GITHUB_ENV
-          echo "tag=${TAG}" >> $GITHUB_OUTPUT
-          echo "${TAG}" > VERSION
-          echo "Building tag: ${TAG} for ${{ matrix.arch }}"
+PostgreSQL:
+图像: PostgreSQL:15
+    container_name: PostgreSQL
+重新启动: 总是
+环境:
+      POSTGRES_USER: 根
+      POSTGRES_PASSWORD: 123456 #️重要：我喜欢你的作品
+      POSTGRES_DB: new-api
+卷:
+      - pg_data:/var/lib/postgresql/data
+#端口：
+#-“5432:5432”#如果需要从 Docker bostgresql
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+# mysql:
+# image: mysql:8.2
+# container_name: mysql
+#重启：一直
+#环境：
+#MYSQL_ROOT_PASSWORD:123456#你重要：️you you mayoto mayoto mayou!
+# MYSQL_DATABASE: new-api
+#卷：
+# - mysql_data:/var/lib/mysql
+#端口：
+#-“3306:3306”#如果您需要从 Docker you you MySQL
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Extract metadata (labels)
-        id: meta
-        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
-        with:
-          images: calciumion/new-api
-
-      - name: Build & push
-        id: build
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        with:
-          context: .
-          platforms: ${{ matrix.platform }}
-          push: true
-          tags: |
-            calciumion/new-api:${{ env.TAG }}-${{ matrix.arch }}
-            calciumion/new-api:latest-${{ matrix.arch }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          provenance: mode=max
-          sbom: true
-
-      - name: Install cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-
-      - name: Sign image with cosign
-        run: cosign sign --yes calciumion/new-api@${{ steps.build.outputs.digest }}
-
-      - name: Image summary
-        run: |
-          echo "### Docker Image Digest (${{ matrix.arch }})" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "calciumion/new-api:${TAG}-${{ matrix.arch }}" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.build.outputs.digest }}" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-
-  create_manifests:
-    name: Create multi-arch manifests
-    needs: [build_single_arch]
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
-
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Set version
-        run: echo "TAG=${{ needs.build_single_arch.outputs.tag }}" >> $GITHUB_ENV
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Create & push manifest (version)
-        run: |
-          docker buildx imagetools create \
-            -t calciumion/new-api:${TAG} \
-            calciumion/new-api:${TAG}-amd64 \
-            calciumion/new-api:${TAG}-arm64
-
-      - name: Create & push manifest (latest)
-        run: |
-          docker buildx imagetools create \
-            -t calciumion/new-api:latest \
-            calciumion/new-api:latest-amd64 \
-            calciumion/new-api:latest-arm64
-
-      - name: Install cosign
-        uses: sigstore/cosign-installer@v3
-
-      - name: Sign manifests with cosign
-        run: |
-          cosign sign --yes calciumion/new-api:${TAG}
-          cosign sign --yes calciumion/new-api:latest
-
-      - name: Manifest summary
-        run: |
-          echo "### Multi-arch Manifest" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          docker buildx imagetools inspect calciumion/new-api:${TAG} >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+卷:
+  pg_data:
+# mysql_data:
