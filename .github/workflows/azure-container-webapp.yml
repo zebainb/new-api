@@ -1,0 +1,86 @@
+突耳#有关Azure的GitHub操作的更多信息：https://GitHub.com/Azure/Actions编辑
+数据传输对象
+电子
+伐木工
+#
+中间件
+#
+模型
+oauth
+#
+包继电器文件
+GITHUB_REPOSITORY,,}relaykit折叠文件树
+#
+路由器文件
+#
+包
+继电器文件
+relaykit折叠文
+件
+树
+网络
+#
+d-push-action@0565240e2d4ab88bba5387d719585280857ece09 .创建具有
+商品
+商品: docker/buil][商品][商品][商品][商品]
+
+# v5.0.0哟是我的最爱，我想这是我的最爱，我想这是我的最爱
+
+"REPO=${GITHUB_REPOSITORY，}"-name:小写回购名称和用户名运行:echo
+Eps.deploy-TO-webapp.outputs.webapp-url}>${GITHUB_ENV}-name:you Azure Web Appid
+
+用途:azure/webapps-deploy@v2app-name: ${{ env.AZURE_WEBAPP_NAME }}发布-简介: $:图片：{secrets.AZURE_WEBAPP_PUBLISH_PROFILE}}'ghcr.io/${{env.REPO}}：${{github.sha}}'
+#5.更改 英语字母表的第25个字母哟u ma英语字母表的第25个字母哟到ZURE_WEBAPP_NAME您：[#you GitHub you:https://GitHub.com/AZURE/Actions：]#DOCKER_REGISTRY_SERVER_URL：[https://ghcr.io]：
+#有关 Azure Web Apps you mayoto you you you you you:https://github.com/Azure/webapps-Deploy：[[[[[[[[main]]]#DOCKER_REGISTRY_SERVER_PASSWORD:#DOCKER_REGISTRY_SERVER:#
+作品字母表的第六个字母升 ow_d*:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Lowercase the repo name and username
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
+      - name: BE江
+      广告下转EN江
+      E广告n: ubunth:
+英语字母表的第21个字母
+          最近的
+        用途-name：设置Docker Buildx用途d1ec667646a06c2ce06100226 # v3.0.0
+
+  deploy:
+名字登录到GitHub容器注册表美国D哟克尔s:
+/登录-action@343 f 7 c 4344506 bcbf 9 b 4 de 18042 ae 17996 df 046 d#v3.0.0威斯康星州雷吉ST
+ry: ghcr.io-on: 用户名${{github.actor}}buntu-latest
+密码：${{github.token}}-姓名：升哟
+wercnment:
+跑echo "REPO=${回购名称和用户名
+      url:GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}-姓名：B英语字母表的第21个字母ild并将容器映像推送到注册表
+
+    steps:
+美国
+E
+
+S
+: docker/buil
+d-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        with:
+W
+我
+T
