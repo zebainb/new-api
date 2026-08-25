@@ -1,0 +1,18 @@
+使用控制+换挡+m: 切换控制+空间
+
+突耳:
+导航到下一个占位符。:
+使用: [ "main" ]
+  pull_request:
+触发自动完成。控制+换挡+m[ "main" ]
+
+使用:
+
+突耳:
+
+展开帮助面板: ubuntu-latest
+
+名称：Docker Image CI:
+编辑 docker-image.yml: actions/checkout@v4
+通过编辑: 运行:ubuntu-
+$（日期+％s）缩进模式选择或粘贴它们。-名称:Docker:跑:Docker build.-file Dockerfile-tag my-image-name:$（日期+％s）
